@@ -1,15 +1,18 @@
 <template>
-    <div>hello nuxt.js</div>
+    <div>mainPage</div>
 </template>
 
 <script>
-export default {
-    data(){
-        return {
-            name : ''
+    export default {
+        data() {
+            return {
+                name: 'Nuxt.js'
+            }
+        },
+        head: {
+            title: '메인페이지'
         }
     }
-}
 </script>
 
 <style>

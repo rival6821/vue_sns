@@ -4,9 +4,15 @@
 
 <script>
 export default {
+    layout : 'admin',
     data(){
         return {
-            name : ''
+            name : 'profile'
+        }
+    },
+    head() {
+        return {
+            title : '프로필'
         }
     }
 }

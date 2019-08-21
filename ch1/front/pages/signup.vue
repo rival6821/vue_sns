@@ -6,7 +6,12 @@
 export default {
     data(){
         return {
-            name : ''
+            name : 'signup'
+        }
+    },
+    head() {
+        return {
+            title : '회원가입'
         }
     }
 }

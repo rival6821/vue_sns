@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <div>
+        <nav>
             <v-toolbar dark color="green">
                 <v-toolbar-title>
                     <nuxt-link to="/">Home</nuxt-link>
@@ -16,8 +16,15 @@
                     </v-btn>
                 </v-toolbar-items>
             </v-toolbar>
-        </div>
-        <nuxt />
+        </nav>
+        <v-row>
+            <v-col cols="12" md="4">
+                <div>로그인창</div>
+            </v-col>
+            <v-col cols="12" md="8">
+                <nuxt />
+            </v-col>
+        </v-row>
     </v-app>
 </template>
 
@@ -29,4 +36,4 @@ export default {
 
 <style>
 
-</style>durlfmf
+</style>

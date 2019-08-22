@@ -3,8 +3,10 @@ module.exports = {
         title : 'Vue-SNS'
     },
     modules : [
-        '@nuxtjs/vuetify',
         '@nuxtjs/axios',
+    ],
+    devModules : [
+        '@nuxtjs/vuetify',
     ],
     plugins : [
 

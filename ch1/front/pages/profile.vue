@@ -10,10 +10,8 @@ export default {
             name : 'profile'
         }
     },
-    head() {
-        return {
-            title : '프로필'
-        }
+    head:{
+        title : '프로필'
     }
 }
 </script>

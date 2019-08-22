@@ -9,10 +9,8 @@ export default {
             name : 'signup'
         }
     },
-    head() {
-        return {
-            title : '회원가입'
-        }
+    head:{
+        title : '회원가입'
     }
 }
 </script>

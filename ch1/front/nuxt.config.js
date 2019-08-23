@@ -1,17 +1,17 @@
 module.exports = {
-    head : {
-        title : 'Vue-SNS'
+    head: {
+        title: 'Vue-SNS'
     },
-    modules : [
+    modules: [
         '@nuxtjs/axios',
     ],
-    devModules : [
+    devModules: [
         '@nuxtjs/vuetify',
     ],
-    plugins : [
+    plugins: [
 
     ],
-    vuetify : {
+    vuetify: {
 
     }
 };

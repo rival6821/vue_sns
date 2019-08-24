@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card>
-      <v-form v-model="valid" @submit.prevent="onSubmitForm" ref="form">
+      <v-form v-model="value" @submit.prevent="onSubmitForm" ref="form">
         <v-container>
           <v-text-field label="이메일" type="email" required v-model="email" :rules="emailRules" />
           <v-text-field

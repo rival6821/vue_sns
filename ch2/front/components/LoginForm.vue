@@ -11,7 +11,7 @@
             v-model="password"
             :rules="passwordRules"
           />
-          <v-btn color="green" type="submit" :disabled="!valid">로그인</v-btn>
+          <v-btn color="green" type="submit" :disabled="!value">로그인</v-btn>
           <v-btn nuxt to="/signup">회원가입</v-btn>
         </v-container>
       </v-form>

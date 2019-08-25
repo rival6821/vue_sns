@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <post-form v-if="me" />
     <div>
       <post-card />
       <post-card />
@@ -11,6 +12,7 @@
 
 <script>
 import PostCard from "~/components/PostCard";
+import PostForm from "~/components/PostForm";
 
 export default {
   data() {
@@ -19,10 +21,16 @@ export default {
     };
   },
   components: {
-    PostCard
+    PostCard,
+    PostForm
   },
   head: {
     title: "메인페이지"
+  },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    }
   }
 };
 </script>

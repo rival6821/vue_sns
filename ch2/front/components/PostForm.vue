@@ -1,7 +1,7 @@
 <template>
   <v-card style="margin-bottom:20px;">
     <v-container>
-      <v-form @submit.prevent="onSubmitForm()" v-model="valid" ref="form">
+      <v-form @submit.prevent="onSubmitForm" v-model="valid" ref="form">
         <v-textarea
           v-model="content"
           outlined
@@ -12,7 +12,7 @@
           :success-messages="successMessages"
           :success="success"
           :rules="[v => !!v || '내용을 입력하세요']"
-          @input="onChangeTextarea()"
+          @input="onChangeTextarea"
         />
         <v-btn color="green" type="submit" absolute right>짹잭</v-btn>
         <v-btn>이미지 업로드</v-btn>
@@ -37,10 +37,12 @@ export default {
     ...mapState("users", ["me"])
   },
   methods: {
-    onChangeTextarea() {
-      this.hideDetails = true;
-      this.success = false;
-      this.successMessages = "";
+    onChangeTextarea(value) {
+      if (value.length) {
+        this.hideDetails = true;
+        this.success = false;
+        this.successMessages = "";
+      }
     },
     onSubmitForm() {
       if (this.$refs.form.validate()) {

@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card style="margin-bottom:20px;">
     <v-container>
       <v-form @submit.prevent="onSubmitForm()" v-model="valid" ref="form">
         <v-textarea
@@ -56,6 +56,7 @@ export default {
             createdAt: Date.now()
           })
           .then(() => {
+            this.content = "";
             this.hideDetails = false;
             this.success = true;
             this.successMessages = "게시글 등록 성공!";

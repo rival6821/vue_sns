@@ -1,5 +1,5 @@
 <template>
-  <v-list-title>
+  <v-list>
     <ul>
       <li>
         <span>일훈</span>
@@ -10,7 +10,7 @@
         <v-icon>mdi-minus-circle-outline</v-icon>
       </li>
     </ul>
-  </v-list-title>
+  </v-list>
 </template>
 
 <script>

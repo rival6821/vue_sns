@@ -1,17 +1,22 @@
-// 함수여야함
 export const state = () => ({
   mainPosts: []
 });
 
-// 일반객체에 함수가 들어감
 export const mutations = {
   addMainPost(state, payload) {
     state.mainPosts.unshift(payload);
+  },
+  removeMainPost(state, payload) {
+    const index = state.mainPosts.findIndex(v => v.id === payload.id);
+    state.mainPosts.splice(index, 1);
   }
 };
 
 export const actions = {
   add({ commit }, payload) {
     commit("addMainPost", payload);
+  },
+  remove({ commit }, payload) {
+    commit("removeMainPost", payload);
   }
 };

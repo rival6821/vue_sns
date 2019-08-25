@@ -1,22 +1,28 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-form v-model="value" @submit.prevent="onSubmitForm" ref="form">
-        <v-container>
-          <v-text-field label="이메일" type="email" required v-model="email" :rules="emailRules" />
-          <v-text-field
-            label="비밀번호"
-            type="password"
-            required
-            v-model="password"
-            :rules="passwordRules"
-          />
-          <v-btn color="green" type="submit" :disabled="!value">로그인</v-btn>
-          <v-btn nuxt to="/signup">회원가입</v-btn>
-        </v-container>
-      </v-form>
-    </v-card>
-  </v-container>
+  <div>
+    <v-container v-if="!me">
+      <v-card>
+        <v-form v-model="value" @submit.prevent="onSubmitForm" ref="form">
+          <v-container>
+            <v-text-field label="이메일" type="email" required v-model="email" :rules="emailRules" />
+            <v-text-field
+              label="비밀번호"
+              type="password"
+              required
+              v-model="password"
+              :rules="passwordRules"
+            />
+            <v-btn color="green" type="submit" :disabled="!value">로그인</v-btn>
+            <v-btn nuxt to="/signup">회원가입</v-btn>
+          </v-container>
+        </v-form>
+      </v-card>
+    </v-container>
+    <v-container v-else>
+      <div>{{me.nickname}}로그인 되었습니다.</div>
+      <v-btn @click="onLogOut()">로그아웃</v-btn>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -33,14 +39,25 @@ export default {
       passwordRules: [v => !!v || "비밀번호는 필수입니다."]
     };
   },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    }
+  },
   methods: {
     onSubmitForm() {
       this.$refs.form.validate();
-      if (this.valid) {
-        alert("로그인 시도!");
+      if (this.value) {
+        this.$store.dispatch("users/logIn", {
+          email: this.email,
+          nickname: "dummy"
+        });
       } else {
         alert("폼이 유효하지 않습니다.");
       }
+    },
+    onLogOut() {
+      this.$store.dispatch("users/logOut");
     }
   }
 };

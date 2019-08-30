@@ -88,6 +88,21 @@ export default {
   },
   head: {
     title: "회원가입"
+  },
+  middleware: "anonymous",
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    }
+  },
+  watch: {
+    me(value, oldValue) {
+      if (value) {
+        this.$router.push({
+          path: "/"
+        });
+      }
+    }
   }
 };
 </script>

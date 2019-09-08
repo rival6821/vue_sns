@@ -59,7 +59,13 @@ export const mutations = {
 
 // 비동기작업
 export const actions = {
+  // 회원가입
   signUp({ commit }, payload) {
+    this.$axios.post("/user", {
+      email: payload.email,
+      nickname: payload.nickname,
+      password: payload.password
+    });
     commit("setMe", payload);
   },
   logIn({ commit }, payload) {

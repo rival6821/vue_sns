@@ -19,6 +19,17 @@ app.get("/", (req, res) => {
 app.post("/user", async (req, res, next) => {
   try {
     const hash = await bcrypt.hash(req.body.password, 12);
+
+    //이메일 중복체크
+    const exUser = await db.User.findOne({
+      email: req.body.email
+    });
+    if (exUser) {
+      return status(403).json({
+        errorCode: 1,
+        message: "이미 회원가입되어있습니다."
+      });
+    }
     const newUser = await db.User.create({
       email: req.body.email,
       nickname: req.body.nickname,
@@ -27,7 +38,7 @@ app.post("/user", async (req, res, next) => {
     res.status(201).json(newUser);
   } catch (err) {
     console.log(err);
-    next(err);
+    return next(err);
   }
 });
 

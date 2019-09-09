@@ -61,7 +61,7 @@ export const mutations = {
 export const actions = {
   // 회원가입
   signUp({ commit }, payload) {
-    this.$axios.post("/user", {
+    this.$axios.post("http://localhost:3085/user", {
       email: payload.email,
       nickname: payload.nickname,
       password: payload.password

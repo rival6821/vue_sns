@@ -52,10 +52,20 @@ export default {
     onSubmitForm() {
       this.$refs.form.validate();
       if (this.value) {
-        this.$store.dispatch("users/logIn", {
-          email: this.email,
-          nickname: "dummy"
-        });
+        this.$store
+          .dispatch("users/logIn", {
+            email: this.email,
+            password: this.password
+          })
+          .then(() => {
+            this.$router.push({
+              path: "/"
+            });
+          })
+          .catch(err => {
+            console.error(err);
+            alert("로그인 실패");
+          });
       } else {
         alert("폼이 유효하지 않습니다.");
       }

@@ -14,7 +14,12 @@ db.sequelize.sync();
 passportConfig();
 
 app.use(morgan("dev"));
-app.use(cors("http://localhost:3000"));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookie("cookiesecret"));
@@ -22,7 +27,11 @@ app.use(
   session({
     resave: false,
     saveUninitialized: false,
-    secret: "cookiesecret"
+    secret: "cookiesecret",
+    cookie: {
+      httpOnly: true,
+      secure: false
+    }
   })
 );
 app.use(passport.initialize());
@@ -80,6 +89,12 @@ app.post("/user/login", async (req, res, next) => {
       return res.json(user);
     });
   })(req, res, next);
+});
+
+// 게시글 작성
+app.post("/post", (res, req) => {
+  if (res.isAuthenticated()) {
+  }
 });
 
 app.listen(3085, () => {

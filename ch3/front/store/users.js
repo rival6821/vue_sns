@@ -61,15 +61,45 @@ export const mutations = {
 export const actions = {
   // 회원가입
   signUp({ commit }, payload) {
-    this.$axios.post("http://localhost:3085/user", {
-      email: payload.email,
-      nickname: payload.nickname,
-      password: payload.password
-    });
-    commit("setMe", payload);
+    this.$axios
+      .post(
+        "http://localhost:3085/user",
+        {
+          email: payload.email,
+          nickname: payload.nickname,
+          password: payload.password
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(data => {
+        console.log(data);
+        commit("setMe", payload);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   },
   logIn({ commit }, payload) {
-    commit("setMe", payload);
+    this.$axios
+      .post(
+        "http://localhost:3085/user/login",
+        {
+          email: payload.email,
+          password: payload.password
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(data => {
+        console.log(data);
+        commit("setMe", payload);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   },
   logOut({ commit }) {
     commit("setMe", null);

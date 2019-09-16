@@ -8,6 +8,7 @@ const morgan = require("morgan");
 
 const db = require("./models");
 const passportConfig = require("./passport");
+const usersRouter = require("./routers/user");
 const app = express();
 
 db.sequelize.sync();
@@ -41,55 +42,7 @@ app.get("/", (req, res) => {
   res.status(200).send("안녕!!");
 });
 
-// 회원가입
-app.post("/user", async (req, res, next) => {
-  try {
-    const hash = await bcrypt.hash(req.body.password, 12);
-
-    //이메일 중복체크
-    const exUser = await db.User.findOne({
-      where: {
-        email: req.body.email
-      }
-    });
-    if (exUser) {
-      return status(403).json({
-        errorCode: 1,
-        message: "이미 회원가입되어있습니다."
-      });
-    }
-    const newUser = await db.User.create({
-      email: req.body.email,
-      nickname: req.body.nickname,
-      password: hash
-    });
-    return res.status(201).json(newUser);
-  } catch (err) {
-    console.log(err);
-    return next(err);
-  }
-});
-
-//로그인
-app.post("/user/login", async (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      console.error(err);
-      return next(err);
-    }
-    if (info) {
-      return res.status(401).send(info.reason);
-    }
-    return req.login(user, async err => {
-      // 세션에 사용자 정보 저장
-      if (err) {
-        console.error(err);
-        return next(err);
-      }
-      return res.json(user);
-    });
-  })(req, res, next);
-});
+app.use("/user", usersRouter);
 
 // 게시글 작성
 app.post("/post", (res, req) => {

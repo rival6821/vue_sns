@@ -9,6 +9,7 @@ const morgan = require("morgan");
 const db = require("./models");
 const passportConfig = require("./passport");
 const usersRouter = require("./routers/user");
+const postRouter = require("./routers/post");
 const app = express();
 
 db.sequelize.sync();
@@ -43,12 +44,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", usersRouter);
-
-// 게시글 작성
-app.post("/post", (res, req) => {
-  if (res.isAuthenticated()) {
-  }
-});
+app.use("/post", postRouter);
 
 app.listen(3085, () => {
   console.log(`http://localhost:3085 번 포트에서 작동중`);

@@ -28,7 +28,7 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res) => {
 });
 
 // 게시글 등록
-router.post("/", isLoggedIn, async (req, res) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     // req.body.content,
     // req.body.imagePaths,
@@ -63,6 +63,35 @@ router.post("/", isLoggedIn, async (req, res) => {
   }
 });
 
+// 게시글 수정
+router.post("/edit", isLoggedIn, async (req, res, next) => {
+  try {
+    const editPost = await db.Post.update(
+      {
+        content: req.body.content
+      },
+      {
+        where: {
+          id: req.body.postId
+        }
+      }
+    );
+    const afterPost = await db.Post.findOne({
+      where: { id: req.body.postId, updatedAt: Date.now() },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"]
+        }
+      ]
+    });
+    return res.json(afterPost);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 // 댓글가져오기
 router.get("/:id/comments", async (req, res, next) => {
   try {
@@ -84,7 +113,7 @@ router.get("/:id/comments", async (req, res, next) => {
       ],
       order: [["createdAt", "ASC"]]
     });
-    return res.json(commnets);
+    return res.json(comments);
   } catch (err) {
     console.error(err);
     next(err);

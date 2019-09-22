@@ -7,9 +7,15 @@
           <nuxt-link :to="'/user/'+post.User.id">{{post.User.nickname}}</nuxt-link>
         </h3>
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="!editPost">
         <div>{{post.content}}</div>
       </v-card-text>
+      <v-form v-else>
+        <v-container>
+          <v-text-field v-model="editInput" ref="editInputField" />
+          <v-btn @click="onEditPost">수정</v-btn>
+        </v-container>
+      </v-form>
       <v-card-actions>
         <v-btn text color="orange">
           <v-icon>mdi-twitter-retweet</v-icon>
@@ -20,7 +26,7 @@
         <v-btn text color="orange" @click="onToggleComment">
           <v-icon>mdi-comment-outline</v-icon>
         </v-btn>
-        <v-menu offset-y open-on-hover>
+        <v-menu offset-y open-on-hover v-if="!editPost">
           <template v-slot:activator="{on}">
             <v-btn text color="orange" v-on="on">
               <v-icon>mdi-dots-horizontal</v-icon>
@@ -58,7 +64,9 @@ export default {
   },
   data() {
     return {
-      commentOpened: false
+      commentOpened: false,
+      editPost: false,
+      editInput: ""
     };
   },
   props: {
@@ -73,7 +81,28 @@ export default {
         id: this.post.id
       });
     },
-    onEditPost() {},
+    // 포스트 수정
+    onEditPost() {
+      // console.log(this.editPost);
+      if (this.editPost) {
+        // 수정로직
+        if (this.editInput != "") {
+          this.$store.dispatch("posts/edit", {
+            postId: this.post.id,
+            content: this.editInput
+          });
+        } else {
+          // console.log(this.editInput);
+          alert("게시글 내용을 입력해주세요");
+          return;
+        }
+      } else {
+        // 수정창 열기
+        this.editInput = this.post.content;
+      }
+      this.editPost = !this.editPost;
+      // console.log(this.editPost);
+    },
     onDeletePost() {},
     onToggleComment() {
       if (!this.commentOpened) {

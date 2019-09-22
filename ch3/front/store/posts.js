@@ -13,6 +13,10 @@ export const mutations = {
     const index = state.mainPosts.findIndex(v => v.id === payload.id);
     state.mainPosts.splice(index, 1);
   },
+  editPost(state, payload) {
+    const index = state.mainPosts.findIndex(v => v.id === payload.id);
+    state.mainPosts[index].content = payload.content;
+  },
   loadComment(state, payload) {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     state.mainPosts[index].Comments = payload;
@@ -34,6 +38,7 @@ export const mutations = {
 };
 
 export const actions = {
+  //포스트 등록
   add({ commit, state }, payload) {
     this.$axios
       .post(
@@ -51,8 +56,27 @@ export const actions = {
       })
       .catch(() => {});
   },
+  // 포스트 삭제
   remove({ commit }, payload) {
     commit("removeMainPost", payload);
+  },
+  // 포스트 수정
+  edit({ commit }, payload) {
+    this.$axios
+      .post(
+        "http://localhost:3085/post/edit",
+        {
+          postId: payload.postId,
+          content: payload.content
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(res => {
+        commit("editPost", res.data);
+      })
+      .catch(() => {});
   },
   // 댓글추가하기
   addComment({ commit }, payload) {

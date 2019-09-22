@@ -4,9 +4,6 @@ export const state = () => ({
   imagePaths: []
 });
 
-const totalPosts = 32;
-const limit = 10;
-
 export const mutations = {
   addMainPost(state, payload) {
     state.mainPosts.unshift(payload);
@@ -16,26 +13,17 @@ export const mutations = {
     const index = state.mainPosts.findIndex(v => v.id === payload.id);
     state.mainPosts.splice(index, 1);
   },
+  loadComment(state, payload) {
+    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
+    state.mainPosts[index].Comments = payload;
+  },
   addComment(state, payload) {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     state.mainPosts[index].Comments.unshift(payload);
   },
-  loadPosts(state) {
-    const diff = totalPosts - state.mainPosts.length;
-    const fakePosts = Array(diff > limit ? limit : diff)
-      .fill()
-      .map(v => ({
-        id: Math.random().toString(),
-        User: {
-          id: 1,
-          nickname: "일훈"
-        },
-        content: `Hello~ ${Math.random().toString()}`,
-        Comments: [],
-        Images: []
-      }));
-    state.mainPosts = state.mainPosts.concat(fakePosts);
-    state.hasMorePost = fakePosts.length === limit;
+  loadPosts(state, payload) {
+    state.mainPosts = state.mainPosts.concat(payload);
+    state.hasMorePost = payload.length === limit;
   },
   concatImagePaths(state, payload) {
     state.imagePaths = state.imagePaths.concat(payload);
@@ -66,14 +54,46 @@ export const actions = {
   remove({ commit }, payload) {
     commit("removeMainPost", payload);
   },
+  // 댓글추가하기
   addComment({ commit }, payload) {
-    commit("addComment", payload);
+    this.$axios
+      .post(
+        `http://localhost:3085/post/${payload.postId}/comment`,
+        {
+          content: payload.content
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(res => {
+        commit("addComment", res.data);
+      })
+      .catch(() => {});
   },
-  loadPosts({ commit, state }, payload) {
+  // 댓글가져오기
+  loadComment({ commit }, payload) {
+    this.$axios
+      .get(`http://localhost:3085/post/${payload.postId}/comments`)
+      .then(res => {
+        commit("loadComment", res.data);
+      })
+      .catch(() => {});
+  },
+  // 포스트 불러오기
+  loadPosts({ commit, state }) {
     if (state.hasMorePost) {
-      commit("loadPosts", payload);
+      this.$axios
+        .get(
+          `http://localhost:3085/posts?offset=${state.mainPosts.length}&limit=10`
+        )
+        .then(res => {
+          commit("loadPosts", res.data);
+        })
+        .catch(() => {});
     }
   },
+  // 이미지 업로드
   uploadImages({ commit }, payload) {
     this.$axios
       .post("http://localhost:3085/post/images", payload, {

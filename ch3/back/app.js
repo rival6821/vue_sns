@@ -10,6 +10,7 @@ const db = require("./models");
 const passportConfig = require("./passport");
 const usersRouter = require("./routers/user");
 const postRouter = require("./routers/post");
+const postsRouter = require("./routers/posts");
 const app = express();
 
 db.sequelize.sync();
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
 
 app.use("/user", usersRouter);
 app.use("/post", postRouter);
+app.use("/posts", postsRouter);
 
 app.listen(3085, () => {
   console.log(`http://localhost:3085 번 포트에서 작동중`);

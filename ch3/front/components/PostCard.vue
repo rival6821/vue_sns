@@ -74,7 +74,13 @@ export default {
       });
     },
     onEditPost() {},
+    onDeletePost() {},
     onToggleComment() {
+      if (!this.commentOpened) {
+        this.$store.dispatch("posts/loadComment", {
+          postId: this.post.id
+        });
+      }
       this.commentOpened = !this.commentOpened;
     }
   }

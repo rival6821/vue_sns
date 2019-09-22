@@ -28,6 +28,39 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res) => {
 });
 
 // 게시글 등록
-router.post("/", isLoggedIn, (req, res) => {});
+router.post("/", isLoggedIn, async (req, res) => {
+  try {
+    // req.body.content,
+    // req.body.imagePaths,
+    const hashtags = req.body.content.match(/#[^\s#]+/g);
+    const newPost = await db.Post.create({
+      content: req.body.content,
+      UserId: req.user.id
+    });
+    if (hashtags) {
+      const result = Promise.all(
+        hashtags.map(tag =>
+          db.Hashtag.findOrCreate({
+            where: { name: tag.slice(1).toLowerCase() }
+          })
+        )
+      );
+      await newPost.addHashtags(result(map(r => r[0])));
+    }
+    const fullPost = await db.Post.findOne({
+      where: { id: newPost.id },
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"]
+        }
+      ]
+    });
+    return res.json(fullPost);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 module.exports = router;

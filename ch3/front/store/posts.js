@@ -27,7 +27,7 @@ export const mutations = {
   },
   loadPosts(state, payload) {
     state.mainPosts = state.mainPosts.concat(payload);
-    state.hasMorePost = payload.length === limit;
+    state.hasMorePost = payload.length === 10;
   },
   concatImagePaths(state, payload) {
     state.imagePaths = state.imagePaths.concat(payload);
@@ -54,16 +54,27 @@ export const actions = {
       .then(res => {
         commit("addMainPost", res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   },
   // 포스트 삭제
   remove({ commit }, payload) {
-    commit("removeMainPost", payload);
+    this.$axios
+      .delete(`http://localhost:3085/post/${payload.postId}`, {
+        withCredentials: true
+      })
+      .then(() => {
+        commit("removeMainPost", payload);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   },
   // 포스트 수정
   edit({ commit }, payload) {
     this.$axios
-      .post(
+      .patch(
         "http://localhost:3085/post/edit",
         {
           postId: payload.postId,
@@ -76,7 +87,9 @@ export const actions = {
       .then(res => {
         commit("editPost", res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   },
   // 댓글추가하기
   addComment({ commit }, payload) {
@@ -93,7 +106,9 @@ export const actions = {
       .then(res => {
         commit("addComment", res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   },
   // 댓글가져오기
   loadComment({ commit }, payload) {
@@ -102,19 +117,21 @@ export const actions = {
       .then(res => {
         commit("loadComment", res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   },
   // 포스트 불러오기
-  loadPosts({ commit, state }) {
+  async loadPosts({ commit, state }) {
     if (state.hasMorePost) {
-      this.$axios
-        .get(
+      try {
+        const res = await this.$axios.get(
           `http://localhost:3085/posts?offset=${state.mainPosts.length}&limit=10`
-        )
-        .then(res => {
-          commit("loadPosts", res.data);
-        })
-        .catch(() => {});
+        );
+        commit("loadPosts", res.data);
+      } catch (err) {
+        console.error(err);
+      }
     }
   },
   // 이미지 업로드
@@ -126,6 +143,8 @@ export const actions = {
       .then(res => {
         commit("concatImagePaths", res.data);
       })
-      .catch(() => {});
+      .catch(err => {
+        console.log(err);
+      });
   }
 };

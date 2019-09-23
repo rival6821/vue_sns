@@ -37,7 +37,7 @@ export default {
   },
   // component를 마운트 하기 전에 store에 비동기 작업실행
   fetch({ store }) {
-    store.dispatch("posts/loadPosts");
+    return store.dispatch("posts/loadPosts");
   },
   mounted() {
     window.addEventListener("scroll", this.onScroll);

@@ -64,7 +64,7 @@ router.post("/", isLoggedIn, async (req, res, next) => {
 });
 
 // 게시글 수정
-router.post("/edit", isLoggedIn, async (req, res, next) => {
+router.patch("/edit", isLoggedIn, async (req, res, next) => {
   try {
     const editPost = await db.Post.update(
       {
@@ -89,6 +89,21 @@ router.post("/edit", isLoggedIn, async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(error);
+  }
+});
+
+// 게시글 삭제
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await db.Post.destroy({
+      where: {
+        id: params.id
+      }
+    });
+    return res.send("삭제했습니다.");
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 });
 

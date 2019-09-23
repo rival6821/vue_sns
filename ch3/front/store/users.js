@@ -59,6 +59,17 @@ export const mutations = {
 
 // 비동기작업
 export const actions = {
+  // 회원정보 가져오기
+  async loadUser({ state, commit }) {
+    try {
+      const res = await this.$axios.get("http://localhost:3085/user", {
+        withCredentials: true
+      });
+      commit("setMe", res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  },
   // 회원가입
   signUp({ commit }, payload) {
     this.$axios

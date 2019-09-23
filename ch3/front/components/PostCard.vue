@@ -78,7 +78,7 @@ export default {
   methods: {
     onRemovePost() {
       this.$store.dispatch("posts/remove", {
-        id: this.post.id
+        postId: this.post.id
       });
     },
     // 포스트 수정
@@ -103,7 +103,6 @@ export default {
       this.editPost = !this.editPost;
       // console.log(this.editPost);
     },
-    onDeletePost() {},
     onToggleComment() {
       if (!this.commentOpened) {
         this.$store.dispatch("posts/loadComment", {

@@ -43,6 +43,7 @@ export default {
         this.successMessages = "";
       }
     },
+    // 댓글달기
     onSubmitForm() {
       if (this.$refs.form.validate()) {
         this.$store

@@ -105,7 +105,7 @@ export default {
     },
     onToggleComment() {
       if (!this.commentOpened) {
-        this.$store.dispatch("posts/loadComment", {
+        this.$store.dispatch("posts/loadComments", {
           postId: this.post.id
         });
       }

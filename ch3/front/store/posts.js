@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 export const state = () => ({
   mainPosts: [],
   hasMorePost: true,
@@ -17,12 +19,12 @@ export const mutations = {
     const index = state.mainPosts.findIndex(v => v.id === payload.id);
     state.mainPosts[index].content = payload.content;
   },
-  loadComment(state, payload) {
+  loadComments(state, payload) {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
-    state.mainPosts[index].Comments = payload;
+    Vue.set(state.mainPosts[index], "Comments", payload.data);
   },
   addComment(state, payload) {
-    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
+    const index = state.mainPosts.findIndex(v => v.id === payload.PostId);
     state.mainPosts[index].Comments.unshift(payload);
   },
   loadPosts(state, payload) {
@@ -111,11 +113,11 @@ export const actions = {
       });
   },
   // 댓글가져오기
-  loadComment({ commit }, payload) {
+  loadComments({ commit }, payload) {
     this.$axios
       .get(`http://localhost:3085/post/${payload.postId}/comments`)
       .then(res => {
-        commit("loadComment", res.data);
+        commit("loadComments", { postId: payload.postId, data: res.data });
       })
       .catch(err => {
         console.log(err);

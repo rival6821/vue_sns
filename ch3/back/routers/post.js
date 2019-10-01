@@ -114,7 +114,7 @@ router.delete("/:id", async (req, res, next) => {
   try {
     await db.Post.destroy({
       where: {
-        id: params.id
+        id: req.params.id
       }
     });
     return res.send("삭제했습니다.");
@@ -178,6 +178,15 @@ router.post("/:id/comment", isLoggedIn, async (req, res, next) => {
       ]
     });
     return res.json(comment);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+//리트윗
+router.post("/:id/retweet", isLoggedIn, async (req, res, next) => {
+  try {
   } catch (err) {
     console.error(err);
     next(err);

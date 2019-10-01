@@ -62,7 +62,7 @@ export const actions = {
   // 회원정보 가져오기
   async loadUser({ state, commit }) {
     try {
-      const res = await this.$axios.get("http://localhost:3085/user", {
+      const res = await this.$axios.get("/user", {
         withCredentials: true
       });
       commit("setMe", res.data);
@@ -74,7 +74,7 @@ export const actions = {
   signUp({ commit }, payload) {
     this.$axios
       .post(
-        "http://localhost:3085/user",
+        "/user",
         {
           email: payload.email,
           nickname: payload.nickname,
@@ -95,7 +95,7 @@ export const actions = {
   logIn({ commit }, payload) {
     this.$axios
       .post(
-        "http://localhost:3085/user/login",
+        "/user/login",
         {
           email: payload.email,
           password: payload.password
@@ -115,7 +115,7 @@ export const actions = {
   logOut({ commit }) {
     this.$axios
       .post(
-        "http://localhost:3085/user/logout",
+        "/user/logout",
         {},
         {
           withCredentials: true

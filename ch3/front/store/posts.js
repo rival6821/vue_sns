@@ -12,11 +12,11 @@ export const mutations = {
     state.imagePaths = [];
   },
   removeMainPost(state, payload) {
-    const index = state.mainPosts.findIndex(v => v.id === payload.id);
+    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     state.mainPosts.splice(index, 1);
   },
   editPost(state, payload) {
-    const index = state.mainPosts.findIndex(v => v.id === payload.id);
+    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     state.mainPosts[index].content = payload.content;
   },
   loadComments(state, payload) {
@@ -44,7 +44,7 @@ export const actions = {
   add({ commit, state }, payload) {
     this.$axios
       .post(
-        "http://localhost:3085/post",
+        "/post",
         {
           content: payload.content,
           image: state.imagePaths
@@ -63,7 +63,7 @@ export const actions = {
   // 포스트 삭제
   remove({ commit }, payload) {
     this.$axios
-      .delete(`http://localhost:3085/post/${payload.postId}`, {
+      .delete(`/post/${payload.postId}`, {
         withCredentials: true
       })
       .then(() => {
@@ -77,7 +77,7 @@ export const actions = {
   edit({ commit }, payload) {
     this.$axios
       .patch(
-        "http://localhost:3085/post/edit",
+        "/post/edit",
         {
           postId: payload.postId,
           content: payload.content
@@ -97,7 +97,7 @@ export const actions = {
   addComment({ commit }, payload) {
     this.$axios
       .post(
-        `http://localhost:3085/post/${payload.postId}/comment`,
+        `/post/${payload.postId}/comment`,
         {
           content: payload.content
         },
@@ -115,7 +115,7 @@ export const actions = {
   // 댓글가져오기
   loadComments({ commit }, payload) {
     this.$axios
-      .get(`http://localhost:3085/post/${payload.postId}/comments`)
+      .get(`/post/${payload.postId}/comments`)
       .then(res => {
         commit("loadComments", { postId: payload.postId, data: res.data });
       })
@@ -128,7 +128,7 @@ export const actions = {
     if (state.hasMorePost) {
       try {
         const res = await this.$axios.get(
-          `http://localhost:3085/posts?offset=${state.mainPosts.length}&limit=10`
+          `/posts?offset=${state.mainPosts.length}&limit=10`
         );
         commit("loadPosts", res.data);
       } catch (err) {
@@ -139,7 +139,7 @@ export const actions = {
   // 이미지 업로드
   uploadImages({ commit }, payload) {
     this.$axios
-      .post("http://localhost:3085/post/images", payload, {
+      .post("/post/images", payload, {
         withCredentials: true
       })
       .then(res => {

@@ -5,5 +5,10 @@ module.exports = {
   modules: ["@nuxtjs/axios"],
   buildModules: ["@nuxtjs/vuetify"],
   plugins: [],
-  vuetify: {}
+  vuetify: {},
+  axios: {
+    browserBaseURL: "http://localhost:3085",
+    baseURL: "http://localhost:3085",
+    https: false
+  }
 };

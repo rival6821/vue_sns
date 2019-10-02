@@ -86,7 +86,25 @@ export const actions = {
       )
       .then(res => {
         // console.log(res);
-        commit("setMe", res.data);
+        // commit("setMe", res.data);
+        this.$axios
+          .post(
+            "/user/login",
+            {
+              email: payload.email,
+              password: payload.password
+            },
+            {
+              withCredentials: true
+            }
+          )
+          .then(res => {
+            // console.log(data);
+            commit("setMe", res.data);
+          })
+          .catch(err => {
+            console.error(err);
+          });
       })
       .catch(err => {
         console.error(err);
@@ -105,7 +123,7 @@ export const actions = {
         }
       )
       .then(res => {
-        // console.log(data);
+        // console.log(res.data);
         commit("setMe", res.data);
       })
       .catch(err => {
@@ -122,7 +140,8 @@ export const actions = {
         }
       )
       .then(res => {
-        console.log(res);
+        // console.log(res);
+        alert(res.data);
         commit("setMe", null);
       })
       .catch(err => {

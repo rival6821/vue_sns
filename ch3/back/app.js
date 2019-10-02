@@ -13,6 +13,7 @@ const postRouter = require("./routers/post");
 const postsRouter = require("./routers/posts");
 const app = express();
 
+// db.sequelize.sync({ force: true });
 db.sequelize.sync();
 passportConfig();
 

@@ -10,6 +10,9 @@ const router = express.Router();
 // 사용자정보 가져오기
 router.get("/", isLoggedIn, async (req, res, next) => {
   const user = req.user;
+  if (!user) {
+    return res.status(401).send("로그인이 필요합니다");
+  }
   res.json(user);
 });
 

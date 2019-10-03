@@ -65,9 +65,12 @@ export const actions = {
       const res = await this.$axios.get("/user", {
         withCredentials: true
       });
-      commit("setMe", res.data);
+      // console.log(res);
+      if (res.status == 200) {
+        commit("setMe", res.data);
+      }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
     }
   },
   // 회원가입

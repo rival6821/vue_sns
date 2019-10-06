@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
     "User",
     {
       email: {
-        type: DataTypes.STRING(40),
+        type: DataTypes.STRING(40), // 40자 이내
         allowNull: false, // 필수
         unique: true // 중복금지
       },
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       charset: "utf8",
-      collate: "utf8_general_ci" //한글
+      collate: "utf8_general_ci" // 한글 저장돼요
     }
   );
 

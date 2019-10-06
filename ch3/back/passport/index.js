@@ -15,17 +15,17 @@ module.exports = () => {
           {
             model: db.Post,
             attributes: ["id"]
+          },
+          {
+            model: db.User,
+            as: "Followings",
+            attributes: ["id"]
+          },
+          {
+            model: db.User,
+            as: "Followers",
+            attributes: ["id"]
           }
-          // {
-          //   model: db.User,
-          //   as: "Followings",
-          //   attributes: ["id"]
-          // },
-          // {
-          //   model: db.User,
-          //   as: "Followers",
-          //   attributes: ["id"]
-          // }
         ]
       });
       return done(null, user); // req.user, req.isAuthenticated() === true,

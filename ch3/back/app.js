@@ -11,6 +11,7 @@ const passportConfig = require("./passport");
 const usersRouter = require("./routers/user");
 const postRouter = require("./routers/post");
 const postsRouter = require("./routers/posts");
+const hashtagRouter = require("./routers/hashtag");
 const app = express();
 
 // db.sequelize.sync({ force: true });
@@ -49,6 +50,7 @@ app.get("/", (req, res) => {
 app.use("/user", usersRouter);
 app.use("/post", postRouter);
 app.use("/posts", postsRouter);
+app.use("/hashtag", hashtagRouter);
 
 app.listen(3085, () => {
   console.log(`http://localhost:3085 번 포트에서 작동중`);

@@ -1,4 +1,5 @@
 import Vue from "vue";
+import throttle from "lodash.throttle";
 
 export const state = () => ({
   mainPosts: [],
@@ -15,12 +16,9 @@ export const mutations = {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     state.mainPosts.splice(index, 1);
   },
-  editPost(state, payload) {
-    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
-    state.mainPosts[index].content = payload.content;
-  },
   loadComments(state, payload) {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
+    // 실수: state.mainPosts[index].Comments = payload.data;
     Vue.set(state.mainPosts[index], "Comments", payload.data);
   },
   addComment(state, payload) {
@@ -28,8 +26,12 @@ export const mutations = {
     state.mainPosts[index].Comments.unshift(payload);
   },
   loadPosts(state, payload) {
-    state.mainPosts = state.mainPosts.concat(payload);
-    state.hasMorePost = payload.length === 10;
+    if (payload.reset) {
+      state.mainPosts = payload.data;
+    } else {
+      state.mainPosts = state.mainPosts.concat(payload.data);
+    }
+    state.hasMorePost = payload.data.length === 10;
   },
   concatImagePaths(state, payload) {
     state.imagePaths = state.imagePaths.concat(payload);
@@ -37,24 +39,24 @@ export const mutations = {
   removeImagePath(state, payload) {
     state.imagePaths.splice(payload, 1);
   },
-  likePost(state, payload) {
-    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
-    state.mainPosts[index].Likers.push({
-      id: payload.userId
-    });
-  },
   unlikePost(state, payload) {
     const index = state.mainPosts.findIndex(v => v.id === payload.postId);
     const userIndex = state.mainPosts[index].Likers.findIndex(
       v => v.id === payload.userId
     );
     state.mainPosts[index].Likers.splice(userIndex, 1);
+  },
+  likePost(state, payload) {
+    const index = state.mainPosts.findIndex(v => v.id === payload.postId);
+    state.mainPosts[index].Likers.push({
+      id: payload.userId
+    });
   }
 };
 
 export const actions = {
-  //포스트 등록
   add({ commit, state }, payload) {
+    // 서버에 게시글 등록 요청 보냄
     this.$axios
       .post(
         "/post",
@@ -69,11 +71,8 @@ export const actions = {
       .then(res => {
         commit("addMainPost", res.data);
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(() => {});
   },
-  // 포스트 삭제
   remove({ commit }, payload) {
     this.$axios
       .delete(`/post/${payload.postId}`, {
@@ -82,31 +81,8 @@ export const actions = {
       .then(() => {
         commit("removeMainPost", payload);
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(() => {});
   },
-  // 포스트 수정
-  edit({ commit }, payload) {
-    this.$axios
-      .patch(
-        "/post/edit",
-        {
-          postId: payload.postId,
-          content: payload.content
-        },
-        {
-          withCredentials: true
-        }
-      )
-      .then(res => {
-        commit("editPost", res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  },
-  // 댓글추가하기
   addComment({ commit }, payload) {
     this.$axios
       .post(
@@ -119,37 +95,103 @@ export const actions = {
         }
       )
       .then(res => {
+        console.log("addComment");
         commit("addComment", res.data);
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(() => {});
   },
-  // 댓글가져오기
   loadComments({ commit }, payload) {
     this.$axios
       .get(`/post/${payload.postId}/comments`)
       .then(res => {
-        commit("loadComments", { postId: payload.postId, data: res.data });
+        commit("loadComments", {
+          postId: payload.postId,
+          data: res.data
+        });
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
       });
   },
-  // 포스트 불러오기
-  async loadPosts({ commit, state }) {
-    if (state.hasMorePost) {
-      try {
-        const res = await this.$axios.get(
-          `/posts?offset=${state.mainPosts.length}&limit=10`
-        );
-        commit("loadPosts", res.data);
-      } catch (err) {
-        console.error(err);
+  loadPosts: throttle(async function({ commit, state }, payload) {
+    console.log("loadPosts");
+    try {
+      if (payload && payload.reset) {
+        const res = await this.$axios.get(`/posts?limit=10`);
+        commit("loadPosts", {
+          data: res.data,
+          reset: true
+        });
+        return;
       }
+      if (state.hasMorePost) {
+        const lastPost = state.mainPosts[state.mainPosts.length - 1];
+        const res = await this.$axios.get(
+          `/posts?lastId=${lastPost && lastPost.id}&limit=10`
+        );
+        commit("loadPosts", {
+          data: res.data
+        });
+        return;
+      }
+    } catch (err) {
+      console.error(err);
     }
-  },
-  // 이미지 업로드
+  }, 2000),
+  loadUserPosts: throttle(async function({ commit, state }, payload) {
+    try {
+      if (payload && payload.reset) {
+        const res = await this.$axios.get(
+          `/user/${payload.userId}/posts?limit=10`
+        );
+        commit("loadPosts", {
+          data: res.data,
+          reset: true
+        });
+        return;
+      }
+      if (state.hasMorePost) {
+        const lastPost = state.mainPosts[state.mainPosts.length - 1];
+        const res = await this.$axios.get(
+          `/user/${payload.userId}/posts?lastId=${lastPost &&
+            lastPost.id}&limit=10`
+        );
+        commit("loadPosts", {
+          data: res.data
+        });
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 2000),
+  loadHashtagPosts: throttle(async function({ commit, state }, payload) {
+    try {
+      if (payload && payload.reset) {
+        const res = await this.$axios.get(
+          `/hashtag/${payload.hashtag}?limit=10`
+        );
+        commit("loadPosts", {
+          data: res.data,
+          reset: true
+        });
+        return;
+      }
+      if (state.hasMorePost) {
+        const lastPost = state.mainPosts[state.mainPosts.length - 1];
+        const res = await this.$axios.get(
+          `/hashtag/${payload.hashtag}?lastId=${lastPost &&
+            lastPost.id}&limit=10`
+        );
+        commit("loadPosts", {
+          data: res.data
+        });
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 2000),
   uploadImages({ commit }, payload) {
     this.$axios
       .post("/post/images", payload, {
@@ -159,10 +201,9 @@ export const actions = {
         commit("concatImagePaths", res.data);
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
       });
   },
-  //리트윗
   retweet({ commit }, payload) {
     this.$axios
       .post(
@@ -177,9 +218,9 @@ export const actions = {
       })
       .catch(err => {
         console.error(err);
+        alert(err.response.data);
       });
   },
-  //좋아요
   likePost({ commit }, payload) {
     this.$axios
       .post(
@@ -199,13 +240,13 @@ export const actions = {
         console.error(err);
       });
   },
-  //좋아요해제
   unlikePost({ commit }, payload) {
     this.$axios
       .delete(`/post/${payload.postId}/like`, {
         withCredentials: true
       })
       .then(res => {
+        console.log("unlikePost");
         commit("unlikePost", {
           userId: res.data.userId,
           postId: payload.postId

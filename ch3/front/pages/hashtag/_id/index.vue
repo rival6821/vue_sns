@@ -22,9 +22,6 @@ export default {
     title: "메인페이지"
   },
   computed: {
-    me() {
-      return this.$store.state.users.me;
-    },
     mainPosts() {
       return this.$store.state.posts.mainPosts;
     },
@@ -33,8 +30,11 @@ export default {
     }
   },
   // component를 마운트 하기 전에 store에 비동기 작업실행
-  fetch({ store }) {
-    return store.dispatch("posts/loadPosts");
+  fetch({ store, params }) {
+    return store.dispatch("posts/loadHashtagPosts", {
+      hashtag: params.id,
+      reset: true
+    });
   },
   mounted() {
     window.addEventListener("scroll", this.onScroll);

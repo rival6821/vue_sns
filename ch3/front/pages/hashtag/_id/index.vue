@@ -32,7 +32,7 @@ export default {
   // component를 마운트 하기 전에 store에 비동기 작업실행
   fetch({ store, params }) {
     return store.dispatch("posts/loadHashtagPosts", {
-      hashtag: params.id,
+      hashtag: encodeURIComponent(params.id),
       reset: true
     });
   },
